@@ -27,7 +27,7 @@ const props = defineProps<{
       {{ letter
       }}<span
         v-if="input[i].charAt(index) !== letter && index < input[i].length"
-        class="absolute left-1/2 top-full -translate-x-1/2 -translate-y-1/4 text-sm leading-none text-fg-200/75"
+        class="absolute left-1/2 top-full -translate-x-1/2 -translate-y-1/4 text-lg leading-none text-fg-200/75"
         >{{ input[i].charAt(index) }}</span
       >
     </span>
@@ -48,7 +48,7 @@ const props = defineProps<{
       {{ letter
       }}<span
         v-if="current.charAt(index) !== letter && index < current.length"
-        class="absolute left-1/2 top-full -translate-x-1/2 -translate-y-1/4 text-sm leading-none text-fg-200/75"
+        class="absolute left-1/2 top-full -translate-x-1/2 -translate-y-1/4 text-lg leading-none text-fg-200/75"
         >{{ current.charAt(index) }}</span
       >
     </span>

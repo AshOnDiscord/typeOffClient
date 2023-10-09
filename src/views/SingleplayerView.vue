@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import WordComponent from "@/components/WordComponent.vue";
-import { ref, watch } from "vue";
+import { ref, watch, nextTick } from "vue";
 const words = ref<string[]>([]);
 const length = ref<number>(10);
 const text = ref<string>("");
@@ -92,24 +92,44 @@ const reset = () => {
   input.value = [];
   current.value = "";
 };
+
+const inputEl = ref<HTMLInputElement>();
+
+const focus = () => {
+  console.log("focus");
+  inputEl.value?.focus();
+};
+
+document.addEventListener("keydown", (e: KeyboardEvent) => {
+  console.log("keydown2");
+  if (e.target?.id === "inputEl") return;
+  e.preventDefault();
+  console.log("keydown");
+  focus();
+  nextTick(() => {
+    inputEl.value?.dispatchEvent(new KeyboardEvent("keydown", e));
+  });
+});
+inputEl.value?.addEventListener("keydown", (e: KeyboardEvent) => {
+  console.log("keydown3");
+});
 </script>
 
 <template>
   <main class="px-8 py-6">
-    <div class="mb-4 flex gap-4">
-      <input
-        type="range"
-        min="10"
-        max="50"
-        value="10"
-        step="5"
-        @input="(e) => (length = +(e.currentTarget as HTMLInputElement).value)"
-      />
-      <button class="rounded-md bg-primary-200 px-4 py-2 font-semibold text-bg-100" @click="reset">
-        New
-      </button>
-    </div>
-    <p class="mb-4 text-lg font-semibold leading-loose text-fg-300">
+    <nav class="flex justify-center">
+      <div class="mb-4 flex gap-4 rounded-md bg-fg-300/25 px-4 py-2">
+        <button
+          v-for="lengths in [10, 25, 50, 100]"
+          :key="lengths"
+          @click="length = lengths"
+          :class="{ 'text-primary-200': lengths === length, 'text-fg-300': lengths !== length }"
+        >
+          {{ lengths }}
+        </button>
+      </div>
+    </nav>
+    <p class="mb-4 text-2xl font-bold leading-loose text-fg-300">
       <template v-for="(word, i) in text.split(' ')" :key="`${word}-|-${i}`">
         <WordComponent :word="word" :i="i" :input="input" :current="current" />
       </template>
@@ -118,7 +138,14 @@ const reset = () => {
       class="rounded-md bg-fg-300/25 px-4 py-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-200"
       type="text"
       v-model="current"
-      @keydown="handleInput"
+      @keydown="
+        (e) => {
+          console.log(e);
+          handleInput(e);
+        }
+      "
+      ref="inputEl"
+      id="inputEl"
     />
   </main>
 </template>
