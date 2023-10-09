@@ -65,14 +65,14 @@ const handleInput = (e: KeyboardEvent) => {
       </button>
     </div>
     <!-- <p>{{ text }}</p> -->
-    <p>
+    <p class="text-lg font-semibold text-fg-300">
       <template v-for="(word, i) in text.split(' ')" :key="`${word}-|-${i}`">
         <WordComponent :word="word" :i="i" :input="input" :current="current" />
       </template>
     </p>
     <p class="my-4">{{ input.join("|") }}</p>
     <input
-      class="rounded-md bg-bg-200 px-4 py-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-200"
+      class="rounded-md bg-fg-300/25 px-4 py-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-200"
       type="text"
       v-model="current"
       @keydown="handleInput"

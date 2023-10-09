@@ -6,24 +6,6 @@ const props = defineProps<{
   input: string[];
   current: string;
 }>();
-
-const subStringIndex = (str1: string, str2: string) => {
-  for (let i = 0; i < str1.length; i++) {
-    if (str1.charAt(i) !== str2.charAt(i)) {
-      return i;
-    }
-  }
-  return str1.length;
-};
-
-const snippets = computed(() => {
-  const index = subStringIndex(props.word, props.current);
-  return [
-    props.word.substring(0, index),
-    props.current.substring(index, props.current.length),
-    props.word.substring(index, props.word.length),
-  ];
-});
 </script>
 
 <template>
@@ -46,18 +28,39 @@ const snippets = computed(() => {
     {{ " " }}
   </span>
   <span v-else>{{ word + " " }}</span> -->
-  <span v-if="i < input.length">
-    <span class="text-primary-200">{{ word }}</span>
+  <span
+    v-if="i < input.length"
+    :class="{
+      'underline decoration-secondary-100 decoration-2 underline-offset-2': input[i] !== word,
+    }"
+  >
+    <span
+      v-for="(letter, index) in word"
+      :key="`${letter}-|-${index}`"
+      :class="{
+        'text-fg-200': input[i].charAt(index) === letter,
+        'text-secondary-200': input[i].charAt(index) !== letter && index < input[i].length,
+      }"
+    >
+      {{ letter }}
+    </span>
+    <span class="text-secondary-100">
+      {{ input[i].slice(word.length) }}
+    </span>
   </span>
   <span v-else-if="i === input.length">
-    <span class="text-primary-200">
-      {{ snippets[0] }}
+    <span
+      v-for="(letter, index) in word"
+      :key="`${letter}-|-${index}`"
+      :class="{
+        'text-fg-200': current.charAt(index) === letter,
+        'text-secondary-200': current.charAt(index) !== letter && index < current.length,
+      }"
+    >
+      {{ letter }}
     </span>
-    <span class="text-secondary-200">
-      {{ snippets[1] }}
-    </span>
-    <span>
-      {{ snippets[2] }}
+    <span class="text-secondary-100">
+      {{ current.slice(word.length) }}
     </span>
   </span>
   <span v-else>
