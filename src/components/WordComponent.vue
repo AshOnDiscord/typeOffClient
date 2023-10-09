@@ -24,16 +24,16 @@ const props = defineProps<{
         'text-secondary-200': input[i].charAt(index) !== letter && index < input[i].length,
       }"
     >
-      {{ `|${letter}|` }}
-      <!-- <span
+      {{ letter
+      }}<span
         v-if="input[i].charAt(index) !== letter && index < input[i].length"
         class="absolute left-1/2 top-full -translate-x-1/2 text-sm leading-none text-fg-200/75"
         >{{ input[i].charAt(index) }}</span
-      > -->
+      >
     </span>
-    <!-- <span v-if="input[i].slice(word.length).length > 0" class="text-secondary-100">
+    <span v-if="input[i].slice(word.length).length > 0" class="text-secondary-100">
       {{ input[i].slice(word.length) }}
-    </span> -->
+    </span>
   </span>
   <template v-else-if="i === input.length">
     <span
