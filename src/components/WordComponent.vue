@@ -9,25 +9,6 @@ const props = defineProps<{
 </script>
 
 <template>
-  <!-- <span v-if="i < input.length && input[i] === word" :class="'text-primary-200'">{{
-    word + " "
-  }}</span>
-  <span v-else-if="i == input.length">
-    <span
-      v-for="(letter, j) in word.split('')"
-      :key="`${letter}-|-${j}`"
-      :class="{
-        'text-primary-100 underline decoration-primary-100':
-          j < current.length && current.charAt(j) === letter,
-        'text-secondary-100 underline decoration-secondary-100':
-          j < current.length && current.charAt(j) !== letter,
-      }"
-    >
-      {{ letter }}
-    </span>
-    {{ " " }}
-  </span>
-  <span v-else>{{ word + " " }}</span> -->
   <span
     v-if="i < input.length"
     :class="{
@@ -37,18 +18,24 @@ const props = defineProps<{
     <span
       v-for="(letter, index) in word"
       :key="`${letter}-|-${index}`"
+      class="relative"
       :class="{
         'text-fg-200': input[i].charAt(index) === letter,
         'text-secondary-200': input[i].charAt(index) !== letter && index < input[i].length,
       }"
     >
-      {{ letter }}
+      {{ `|${letter}|` }}
+      <!-- <span
+        v-if="input[i].charAt(index) !== letter && index < input[i].length"
+        class="absolute left-1/2 top-full -translate-x-1/2 text-sm leading-none text-fg-200/75"
+        >{{ input[i].charAt(index) }}</span
+      > -->
     </span>
-    <span class="text-secondary-100">
+    <!-- <span v-if="input[i].slice(word.length).length > 0" class="text-secondary-100">
       {{ input[i].slice(word.length) }}
-    </span>
+    </span> -->
   </span>
-  <span v-else-if="i === input.length">
+  <template v-else-if="i === input.length">
     <span
       v-for="(letter, index) in word"
       :key="`${letter}-|-${index}`"
@@ -59,12 +46,12 @@ const props = defineProps<{
     >
       {{ letter }}
     </span>
-    <span class="text-secondary-100">
+    <span class="text-secondary-100" v-if="current.slice(word.length).length > 0">
       {{ current.slice(word.length) }}
     </span>
-  </span>
-  <span v-else>
-    <span>{{ word }}</span>
-  </span>
+  </template>
+  <template v-else>
+    {{ word }}
+  </template>
   {{ " " }}
 </template>

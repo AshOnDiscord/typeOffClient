@@ -65,7 +65,7 @@ const handleInput = (e: KeyboardEvent) => {
       </button>
     </div>
     <!-- <p>{{ text }}</p> -->
-    <p class="text-lg font-semibold text-fg-300">
+    <p class="text-lg font-semibold leading-loose text-fg-300">
       <template v-for="(word, i) in text.split(' ')" :key="`${word}-|-${i}`">
         <WordComponent :word="word" :i="i" :input="input" :current="current" />
       </template>
