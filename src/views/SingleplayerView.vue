@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import WordComponent from "@/components/WordComponent.vue";
 import { ref, watch } from "vue";
 const words = ref<string[]>([]);
 const length = ref<number>(10);
@@ -24,21 +25,21 @@ watch([words, length], (newValues) => {
 });
 
 const input = ref<string[]>([]);
-const currentType = ref<string>("");
+const current = ref<string>("");
 
 const handleInput = (e: KeyboardEvent) => {
   if (e.key === " ") {
     e.preventDefault();
-    input.value.push(currentType.value);
-    currentType.value = "";
+    input.value.push(current.value);
+    current.value = "";
     return;
   }
   if (e.key === "Backspace") {
-    if (currentType.value !== "") {
+    if (current.value !== "") {
       return;
     }
     e.preventDefault();
-    currentType.value = input.value[input.value.length - 1];
+    current.value = input.value[input.value.length - 1];
     input.value.pop();
     return;
   }
@@ -66,32 +67,14 @@ const handleInput = (e: KeyboardEvent) => {
     <!-- <p>{{ text }}</p> -->
     <p>
       <template v-for="(word, i) in text.split(' ')" :key="`${word}-|-${i}`">
-        <span v-if="i < input.length && input[i] === word" :class="'text-primary-200'">{{
-          word + " "
-        }}</span>
-        <span v-else-if="i == input.length">
-          <span
-            v-for="(letter, j) in word.split('')"
-            :key="`${letter}-|-${j}`"
-            :class="{
-              'text-primary-100 underline decoration-primary-100':
-                j < currentType.length && currentType.charAt(j) === letter,
-              'text-secondary-100 underline decoration-secondary-100':
-                j < currentType.length && currentType.charAt(j) !== letter,
-            }"
-          >
-            {{ letter }}
-          </span>
-          {{ " " }}
-        </span>
-        <span v-else>{{ word + " " }}</span>
+        <WordComponent :word="word" :i="i" :input="input" :current="current" />
       </template>
     </p>
     <p class="my-4">{{ input.join("|") }}</p>
     <input
       class="rounded-md bg-bg-200 px-4 py-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-200"
       type="text"
-      v-model="currentType"
+      v-model="current"
       @keydown="handleInput"
     />
   </main>
