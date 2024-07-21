@@ -4,6 +4,7 @@ import { ref, watch, nextTick } from "vue";
 const words = ref<string[]>([]);
 const length = ref<number>(10);
 const text = ref<string>("");
+const lastWpm = ref<number>(0);
 
 const getText = (words: string[], length: number) => {
   let text = "";
@@ -20,8 +21,12 @@ const getText = (words: string[], length: number) => {
 };
 
 (async () => {
-  const wordsJson = (await fetch("http://192.168.0.25:3000/words")).json();
-  words.value = await wordsJson;
+  const wordsJson = (
+    await fetch(
+      "https://gist.githubusercontent.com/AshOnDiscord/88a758cf0e8eb0b571f8b8cfc4bd7a9a/raw/fc955c3216e183e97248a380cbbc8c2939802642/words.json"
+    )
+  ).text();
+  words.value = JSON.parse(await wordsJson);
 })();
 
 watch([words, length], (newValues) => {
@@ -72,6 +77,7 @@ const handleInput = (e: KeyboardEvent) => {
       console.log(`done ${diffMS / 1000} seconds`);
       const wpm = (correctChars() / 5) * (60 / (diffMS / 1000));
       console.log(correctChars(), wpm);
+      lastWpm.value = wpm;
       reset();
     }
     return;
@@ -91,6 +97,7 @@ const reset = () => {
   text.value = getText(words.value, length.value);
   input.value = [];
   current.value = "";
+  hasStarted.value = false;
 };
 
 const inputEl = ref<HTMLInputElement>();
@@ -116,36 +123,41 @@ inputEl.value?.addEventListener("keydown", (e: KeyboardEvent) => {
 </script>
 
 <template>
-  <main class="px-8 py-6">
-    <nav class="flex justify-center">
-      <div class="mb-4 flex gap-4 rounded-md bg-fg-300/25 px-4 py-2">
-        <button
-          v-for="lengths in [10, 25, 50, 100]"
-          :key="lengths"
-          @click="length = lengths"
-          :class="{ 'text-primary-200': lengths === length, 'text-fg-300': lengths !== length }"
-        >
-          {{ lengths }}
-        </button>
-      </div>
-    </nav>
-    <p class="mb-4 text-2xl font-bold leading-loose text-fg-300">
-      <template v-for="(word, i) in text.split(' ')" :key="`${word}-|-${i}`">
-        <WordComponent :word="word" :i="i" :input="input" :current="current" />
-      </template>
-    </p>
-    <input
-      class="rounded-md bg-fg-300/25 px-4 py-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-200"
-      type="text"
-      v-model="current"
-      @keydown="
-        (e) => {
-          console.log(e);
-          handleInput(e);
-        }
-      "
-      ref="inputEl"
-      id="inputEl"
-    />
+  <main class="flex h-screen flex-col items-center justify-center px-8 py-6">
+    <div>
+      <nav class="flex flex-col items-center">
+        <div class="mb-4 flex gap-4 rounded-md bg-fg-300/25 px-4 py-2">
+          <button
+            v-for="lengths in [10, 25, 50, 100]"
+            :key="lengths"
+            @click="length = lengths"
+            :class="{ 'text-primary-200': lengths === length, 'text-fg-300': lengths !== length }"
+          >
+            {{ lengths }}
+          </button>
+        </div>
+        <p class="text-fg-100">
+          Last Run: <span class="font-semibold text-primary-200">{{ lastWpm.toFixed(2) }}</span> wpm
+        </p>
+      </nav>
+      <p class="mb-4 text-2xl font-bold leading-loose text-fg-300">
+        <template v-for="(word, i) in text.split(' ')" :key="`${word}-|-${i}`">
+          <WordComponent :word="word" :i="i" :input="input" :current="current" />
+        </template>
+      </p>
+      <input
+        class="block w-full rounded-md bg-fg-300/25 px-4 py-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-200"
+        type="text"
+        v-model="current"
+        @keydown="
+          (e) => {
+            console.log(e);
+            handleInput(e);
+          }
+        "
+        ref="inputEl"
+        id="inputEl"
+      />
+    </div>
   </main>
 </template>
