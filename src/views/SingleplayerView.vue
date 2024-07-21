@@ -109,7 +109,7 @@ const focus = () => {
 
 document.addEventListener("keydown", (e: KeyboardEvent) => {
   console.log("keydown2");
-  if (e.target?.id === "inputEl") return;
+  if ((e.target as HTMLElement)?.id === "inputEl") return;
   e.preventDefault();
   console.log("keydown");
   focus();
